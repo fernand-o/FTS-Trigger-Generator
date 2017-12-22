@@ -80,7 +80,7 @@ end;
 function TFTSGenerator.ProcessColumns(Weights: TArray<TArray<TFTSColumn>>): string;
 const
   ItemTextFmt = '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '',%s), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''%s'')';
-  ItemNumFmt =  '    setweight(to_tsvector(''pt'', coalesce(concat_ws('' '',%s),'')), ''%s'')';
+  ItemNumFmt =  '    setweight(to_tsvector(''pt'', coalesce(concat_ws('' '',%s),'''')), ''%s'')';
 var
   Numerics, Texts: TArray<TFTSColumn>;
   Column: TFTSColumn;
@@ -186,7 +186,7 @@ end;
 function TFTSGenerator.TempTableDefinition: string;
 const
   TempTableFmt = sLineBreak + '    WITH %s_temp(%s) AS (VALUES ('+ sLineBreak + '%s))';
-  NumRegexFmt = '      regexp_replace(NEW.%s, ''[^0-9]'', '', ''g'')';
+  NumRegexFmt = '      regexp_replace(NEW.%s, ''[^0-9]'', '''', ''g'')';
 var
   Column: TFTSColumn;
   NumericColumns: TArray<string>;

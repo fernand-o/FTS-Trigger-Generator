@@ -62,16 +62,16 @@ begin
     'BEGIN'+ sLineBreak +
     '  NEW.FTS_DOCUMENT = ('+ sLineBreak +
     '    WITH pessoa_temp(numero,cep,cpf,rg,fone_comercial,fone_residencial,fone_celular,fone,fax,cnpj) AS (VALUES ('+ sLineBreak +
-    '      regexp_replace(NEW.numero, ''[^0-9]'', '', ''g''),'+ sLineBreak +
-    '      regexp_replace(NEW.cep, ''[^0-9]'', '', ''g''),'+ sLineBreak +
-    '      regexp_replace(NEW.cpf, ''[^0-9]'', '', ''g''),'+ sLineBreak +
-    '      regexp_replace(NEW.rg, ''[^0-9]'', '', ''g''),'+ sLineBreak +
-    '      regexp_replace(NEW.fone_comercial, ''[^0-9]'', '', ''g''),'+ sLineBreak +
-    '      regexp_replace(NEW.fone_residencial, ''[^0-9]'', '', ''g''),'+ sLineBreak +
-    '      regexp_replace(NEW.fone_celular, ''[^0-9]'', '', ''g''),'+ sLineBreak +
-    '      regexp_replace(NEW.fone, ''[^0-9]'', '', ''g''),'+ sLineBreak +
-    '      regexp_replace(NEW.fax, ''[^0-9]'', '', ''g''),'+ sLineBreak +
-    '      regexp_replace(NEW.cnpj, ''[^0-9]'', '', ''g'')))'+ sLineBreak +
+    '      regexp_replace(NEW.numero, ''[^0-9]'', '''', ''g''),'+ sLineBreak +
+    '      regexp_replace(NEW.cep, ''[^0-9]'', '''', ''g''),'+ sLineBreak +
+    '      regexp_replace(NEW.cpf, ''[^0-9]'', '''', ''g''),'+ sLineBreak +
+    '      regexp_replace(NEW.rg, ''[^0-9]'', '''', ''g''),'+ sLineBreak +
+    '      regexp_replace(NEW.fone_comercial, ''[^0-9]'', '''', ''g''),'+ sLineBreak +
+    '      regexp_replace(NEW.fone_residencial, ''[^0-9]'', '''', ''g''),'+ sLineBreak +
+    '      regexp_replace(NEW.fone_celular, ''[^0-9]'', '''', ''g''),'+ sLineBreak +
+    '      regexp_replace(NEW.fone, ''[^0-9]'', '''', ''g''),'+ sLineBreak +
+    '      regexp_replace(NEW.fax, ''[^0-9]'', '''', ''g''),'+ sLineBreak +
+    '      regexp_replace(NEW.cnpj, ''[^0-9]'', '''', ''g'')))'+ sLineBreak +
     '    SELECT'+ sLineBreak +
     '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '','+ sLineBreak +
     '      nome,'+ sLineBreak +
@@ -86,7 +86,7 @@ begin
     '      pessoa_temp.rg,'+ sLineBreak +
     '      reverse(pessoa_temp.rg),'+ sLineBreak +
     '      pessoa_temp.cnpj,'+ sLineBreak +
-    '      reverse(pessoa_temp.cnpj)),'')), ''B'') ||'+ sLineBreak +
+    '      reverse(pessoa_temp.cnpj)),'''')), ''B'') ||'+ sLineBreak +
     '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '','+ sLineBreak +
     '      endereco,'+ sLineBreak +
     '      complemento,'+ sLineBreak +
@@ -105,7 +105,7 @@ begin
     '      pessoa_temp.fone,'+ sLineBreak +
     '      reverse(pessoa_temp.fone),'+ sLineBreak +
     '      pessoa_temp.fax,'+ sLineBreak +
-    '      reverse(pessoa_temp.fax)),'')), ''C'') ||'+ sLineBreak +
+    '      reverse(pessoa_temp.fax)),'''')), ''C'') ||'+ sLineBreak +
     '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '','+ sLineBreak +
     '      estado_civil,'+ sLineBreak +
     '      ie), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''C'') ||'+ sLineBreak +
