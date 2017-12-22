@@ -6,12 +6,20 @@ program FTSGeneratorTests;
 
 uses
   DUnitTestRunner,
+  System.SysUtils,
+  DunitXTestRunner,
   GeneratorTests in 'GeneratorTests.pas',
   Generator in '..\Generator.pas';
 
 {$R *.RES}
 
 begin
-  DUnitTestRunner.RunRegisteredTests;
+  try
+    TTestRunner.Executar;
+    TDUnitXTestRunner.Execute;
+  except
+    on E: Exception do
+      TDUnitXTestRunner.MostrarErro(E);
+  end;
 end.
 

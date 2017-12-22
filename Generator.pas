@@ -17,11 +17,12 @@ type
     FRawColumns: string;
     FColumns: TArray<TFTSColumn>;
     FResults: TArray<string>;
+    FUseTempTable: Boolean;
     procedure AddResult(const ValueFmt: string; const Args: array of const);
     procedure DefineColumns;
     procedure GenerateMetadata;
     procedure GenerateTrigger;
-    function TempTable: string;
+    function TempTableDefinition: string;
     function SelectWithWeights: string;
     function ProcessColumns(Weights: TArray<TArray<TFTSColumn>>): string;
   public
@@ -59,23 +60,28 @@ end;
 procedure TFTSGenerator.GenerateTrigger;
 const
   TriggerWrapperFmt =
-    'CREATE OR REPLACE FUNCTION %s_fts_document_trigger() RETURNS TRIGGER AS $$'+
-    'BEGIN '+
-    '  NEW.FTS_DOCUMENT = (%s); '+
-    '  RETURN NEW; '+
+    'CREATE OR REPLACE FUNCTION %s_fts_document_trigger() RETURNS TRIGGER AS $$'+ sLineBreak +
+    'BEGIN'+ sLineBreak +
+    '  NEW.FTS_DOCUMENT = (%s);'+ sLineBreak +
+    '  RETURN NEW;'+ sLineBreak +
     'END;';
 var
-  TriggerContent: string;
+  TriggerContent, TempTable: string;
 begin
   DefineColumns;
-  TriggerContent := TempTable + SelectWithWeights;
+
+  TempTable := TempTableDefinition;
+  FUseTempTable := not TempTable.IsEmpty;
+
+  TriggerContent := TempTableDefinition + SelectWithWeights;
   AddResult(TriggerWrapperFmt, [FTable, TriggerContent]);
 end;
 
 function TFTSGenerator.ProcessColumns(Weights: TArray<TArray<TFTSColumn>>): string;
 const
-  ItemTextFmt = 'setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '', %s), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''%s'')';
-  ItemNumFmt =  'setweight(to_tsvector(''pt'', coalesce(concat_ws('' '', %s),'')), ''%s'')';
+  ItemTextFmt = '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '',%s), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''%s'')';
+  ItemNumFmt =  '    setweight(to_tsvector(''pt'', coalesce(concat_ws('' '',%s),'')), ''%s'')';
+  ColFmt = '      %s' + sLineBreak;
 var
   Numerics, Texts: TArray<TFTSColumn>;
   Column: TFTSColumn;
@@ -101,13 +107,14 @@ var
       Cols := Cols + [Format(ReverseFmt, [Col])];
     end;
 
-    Results := Results + [Format(ItemNumFmt, [''.Join(',', Cols), NumericColumn.weight ])];
+    Results := Results + [Format(ItemNumFmt, [''.Join(',' + sLineBreak, Cols), NumericColumn.weight])];
   end;
 
   procedure AddTextColumns;
   var
     TextColumn: TFTSColumn;
     Cols: TArray<string>;
+    ColsStr: string;
   begin
     if Length(Texts) = 0 then
       Exit;
@@ -115,7 +122,10 @@ var
     for TextColumn in Texts do
       Cols := Cols + [TextColumn.name];
 
-    Results := Results + [Format(ItemTextFmt, [''.Join(',', Cols), TextColumn.weight ])];
+    if Length(Cols) > 1 then
+      Cols[0] := sLineBreak +'      '+ Cols[0];
+
+    Results := Results + [Format(ItemTextFmt, [''.Join(',' + sLineBreak + '      ', Cols), TextColumn.weight])];
   end;
 
 begin
@@ -139,12 +149,12 @@ begin
     AddTextColumns;
   end;
 
-  Result := ''.Join(' || ', Results);
+  Result := ''.Join(' ||' + sLineBreak, Results);
 end;
 
 function TFTSGenerator.SelectWithWeights: string;
 const
-  SelectFmt = 'SELECT %s FROM %s_temp';
+  SelectTempTableFmt = 'SELECT' + sLineBreak + '%s' + sLineBreak + '    FROM %s_temp';
 var
   SelectColumns: string;
   Weights: TArray<TArray<TFTSColumn>>;
@@ -167,13 +177,16 @@ begin
 
   SelectColumns := ProcessColumns(Weights);
 
-  Result := Format(SelectFmt, [SelectColumns, FTable]);
+  if FUseTempTable then
+    Result := Format(SelectTempTableFmt, [SelectColumns, FTable])
+  else
+    Result := sLineBreak + SelectColumns;
 end;
 
-function TFTSGenerator.TempTable: string;
+function TFTSGenerator.TempTableDefinition: string;
 const
-  TempTableFmt = 'WITH %s_temp(%s) AS (VALUES (%s))';
-  NumRegexFmt = 'regexp_replace(NEW.%s, ''[^0-9]'', '', ''g'')';
+  TempTableFmt = '  WITH %s_temp(%s) AS (VALUES (%s))';
+  NumRegexFmt = '    regexp_replace(NEW.%s, ''[^0-9]'', '', ''g'')';
 var
   Column: TFTSColumn;
   NumericColumns: TArray<string>;
@@ -186,14 +199,14 @@ begin
       NumericColumns := NumericColumns + [Column.name];
 
   if Length(NumericColumns) = 0 then
-    Exit;
+    Exit('');
 
   ColumnNames := ''.Join(',', NumericColumns);
 
   for I := 0 to Pred(Length(NumericColumns)) do
     NumericColumns[I] := Format(NumRegexFmt, [NumericColumns[I]]);
 
-  AddResult(TempTableFmt, [FTable, ColumnNames, ''.Join(',', NumericColumns)]);
+  Result := Format(TempTableFmt, [FTable, ColumnNames, ''.Join(',' + sLineBreak, NumericColumns)]);
 end;
 
 procedure TFTSGenerator.DefineColumns;
@@ -203,7 +216,7 @@ var
 
   function ColumnType(typ: string): TFTSFieldType;
   begin
-    if (typ.trim = 'character') or (typ.trim = 'text') then
+    if (typ.StartsWith('char')) or (typ.StartsWith('text')) or (typ.StartsWith('memo')) then
       Exit(ftText);
 
     Result := ftNumeric;

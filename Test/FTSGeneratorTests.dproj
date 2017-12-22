@@ -69,6 +69,10 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <DCC_UnitSearchPath>..\vendor\dunitx;.\;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <Manifest_File>None</Manifest_File>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_ExeOutput>.\</DCC_ExeOutput>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -103,6 +107,14 @@
                 <Source>
                     <Source Name="MainSource">FTSGeneratorTests.dpr</Source>
                 </Source>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k210.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp210.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Program Files (x86)\FastReports\FastReport 5\LibD21\dclfsbde21.bpl">File C:\Program Files (x86)\FastReports\FastReport 5\LibD21\dclfsbde21.bpl not found</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Program Files (x86)\FastReports\FastReport 5\LibD21\dclfrxbde21.bpl">File C:\Program Files (x86)\FastReports\FastReport 5\LibD21\dclfrxbde21.bpl not found</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Program Files (x86)\FastReports\FastReport 5\LibD21\dclfstee21.bpl">File C:\Program Files (x86)\FastReports\FastReport 5\LibD21\dclfstee21.bpl not found</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Program Files (x86)\FastReports\FastReport 5\LibD21\dclfrxtee21.bpl">File C:\Program Files (x86)\FastReports\FastReport 5\LibD21\dclfrxtee21.bpl not found</Excluded_Packages>
+                </Excluded_Packages>
             </Delphi.Personality>
             <Deployment>
                 <DeployFile LocalName="Win32\Debug\FTSGeneratorTests.exe" Configuration="Debug" Class="ProjectOutput">
