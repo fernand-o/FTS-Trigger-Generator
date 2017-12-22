@@ -15,7 +15,6 @@ uses
 
 begin
   try
-    TTestRunner.Executar;
     TDUnitXTestRunner.Execute;
   except
     on E: Exception do

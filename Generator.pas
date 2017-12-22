@@ -81,7 +81,6 @@ function TFTSGenerator.ProcessColumns(Weights: TArray<TArray<TFTSColumn>>): stri
 const
   ItemTextFmt = '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '',%s), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''%s'')';
   ItemNumFmt =  '    setweight(to_tsvector(''pt'', coalesce(concat_ws('' '',%s),'')), ''%s'')';
-  ColFmt = '      %s' + sLineBreak;
 var
   Numerics, Texts: TArray<TFTSColumn>;
   Column: TFTSColumn;
@@ -106,8 +105,9 @@ var
       Cols := Cols + [Col];
       Cols := Cols + [Format(ReverseFmt, [Col])];
     end;
+    Cols[0] := sLineBreak +'      '+ Cols[0];
 
-    Results := Results + [Format(ItemNumFmt, [''.Join(',' + sLineBreak, Cols), NumericColumn.weight])];
+    Results := Results + [Format(ItemNumFmt, [''.Join(',' + sLineBreak  + '      ', Cols), NumericColumn.weight])];
   end;
 
   procedure AddTextColumns;
@@ -154,7 +154,7 @@ end;
 
 function TFTSGenerator.SelectWithWeights: string;
 const
-  SelectTempTableFmt = 'SELECT' + sLineBreak + '%s' + sLineBreak + '    FROM %s_temp';
+  SelectTempTableFmt = sLineBreak + '    SELECT' + sLineBreak + '%s' + sLineBreak + '    FROM %s_temp';
 var
   SelectColumns: string;
   Weights: TArray<TArray<TFTSColumn>>;
@@ -185,8 +185,8 @@ end;
 
 function TFTSGenerator.TempTableDefinition: string;
 const
-  TempTableFmt = '  WITH %s_temp(%s) AS (VALUES (%s))';
-  NumRegexFmt = '    regexp_replace(NEW.%s, ''[^0-9]'', '', ''g'')';
+  TempTableFmt = sLineBreak + '    WITH %s_temp(%s) AS (VALUES ('+ sLineBreak + '%s))';
+  NumRegexFmt = '      regexp_replace(NEW.%s, ''[^0-9]'', '', ''g'')';
 var
   Column: TFTSColumn;
   NumericColumns: TArray<string>;
