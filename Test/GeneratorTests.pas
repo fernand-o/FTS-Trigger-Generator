@@ -56,8 +56,11 @@ begin
   ReturnValue := FFTSGenerator.GenerateData('pessoa', RawColumns);
 
   Expected :=
-    'ALTER TABLE pessoa ADD COLUMN fts_document tsvector;'+ sLineBreak +
-    'CREATE INDEX pessoa_fts_index ON pessoa USING gist(fts_document);'+ sLineBreak +
+    '-----------------------------------------------------------------' + sLineBreak +
+    'ALTER TABLE pessoa ADD COLUMN fts_document tsvector;'+ sLineBreak + sLineBreak +
+    '-----------------------------------------------------------------' + sLineBreak +
+    'CREATE INDEX pessoa_fts_index ON pessoa USING gist(fts_document);'+ sLineBreak + sLineBreak +
+    '-----------------------------------------------------------------' + sLineBreak +
     'CREATE OR REPLACE FUNCTION pessoa_fts_document_trigger() RETURNS TRIGGER AS $$'+ sLineBreak +
     'BEGIN'+ sLineBreak +
     '  NEW.FTS_DOCUMENT = ('+ sLineBreak +
@@ -148,8 +151,11 @@ begin
   ReturnValue := FFTSGenerator.GenerateData('pessoa', RawColumns);
 
   Expected :=
-    'ALTER TABLE pessoa ADD COLUMN fts_document tsvector;'+ sLineBreak +
-    'CREATE INDEX pessoa_fts_index ON pessoa USING gist(fts_document);'+ sLineBreak +
+    '-----------------------------------------------------------------' + sLineBreak +
+    'ALTER TABLE pessoa ADD COLUMN fts_document tsvector;'+ sLineBreak + sLineBreak +
+    '-----------------------------------------------------------------' + sLineBreak +
+    'CREATE INDEX pessoa_fts_index ON pessoa USING gist(fts_document);'+ sLineBreak + sLineBreak +
+    '-----------------------------------------------------------------' + sLineBreak +
     'CREATE OR REPLACE FUNCTION pessoa_fts_document_trigger() RETURNS TRIGGER AS $$'+ sLineBreak +
     'BEGIN'+ sLineBreak +
     '  NEW.FTS_DOCUMENT = ('+ sLineBreak +
@@ -206,8 +212,11 @@ begin
   ReturnValue := FFTSGenerator.GenerateData('pessoa', RawColumns);
 
   Assert.AreEqual(
-    'ALTER TABLE pessoa ADD COLUMN fts_document tsvector;'+ sLineBreak +
-    'CREATE INDEX pessoa_fts_index ON pessoa USING gist(fts_document);'+ sLineBreak +
+    '-----------------------------------------------------------------' + sLineBreak +
+    'ALTER TABLE pessoa ADD COLUMN fts_document tsvector;'+ sLineBreak + sLineBreak +
+    '-----------------------------------------------------------------' + sLineBreak +
+    'CREATE INDEX pessoa_fts_index ON pessoa USING gist(fts_document);'+ sLineBreak + sLineBreak +
+    '-----------------------------------------------------------------' + sLineBreak +
     'CREATE OR REPLACE FUNCTION pessoa_fts_document_trigger() RETURNS TRIGGER AS $$'+ sLineBreak +
     'BEGIN'+ sLineBreak +
     '  NEW.FTS_DOCUMENT = ('+ sLineBreak +

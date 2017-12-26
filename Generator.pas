@@ -21,6 +21,7 @@ type
     procedure AddResult(const ValueFmt: string; const Args: array of const);
     procedure DefineColumns;
     procedure GenerateMetadata;
+    procedure GenerateFTSFunction;
     procedure GenerateTrigger;
     function TempTableDefinition: string;
     function SelectWithWeights: string;
@@ -33,10 +34,17 @@ implementation
 
 uses
   System.Classes,
+  System.StrUtils,
   System.SysUtils;
 
 procedure TFTSGenerator.AddResult(const ValueFmt: string; const Args: array of const);
+var
+  Str: string;
 begin
+  if Length(FResults) > 0 then
+    FResults := FResults + [''];
+
+  FResults := FResults + ['-----------------------------------------------------------------'];
   FResults := FResults + [Format(ValueFmt, Args)];
 end;
 
@@ -46,6 +54,7 @@ begin
   FRawColumns := RawColumns;
 
   GenerateMetadata;
+  GenerateFTSFunction;
   GenerateTrigger;
 
   Result := ''.Join(sLineBreak, FResults);
@@ -58,6 +67,13 @@ begin
 end;
 
 procedure TFTSGenerator.GenerateTrigger;
+const
+  TriggerFmt = 'CREATE TRIGGER %s_fts_update_trigger BEFORE INSERT OR UPDATE ON %s FOR EACH ROW EXECUTE PROCEDURE %s_fts_document_trigger();';
+begin
+  //AddResult(TriggerFmt, [FTable, FTable, FTable]);
+end;
+
+procedure TFTSGenerator.GenerateFTSFunction;
 const
   TriggerWrapperFmt =
     'CREATE OR REPLACE FUNCTION %s_fts_document_trigger() RETURNS TRIGGER AS $$'+ sLineBreak +
