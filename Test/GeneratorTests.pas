@@ -32,26 +32,26 @@ begin
   RawColumns :=
     '    nome character varying(50) NOT NULL, #A'+ sLineBreak +
     '    endereco character varying(50), #B'+ sLineBreak +
-    '    numero integer varying(10), #B'+ sLineBreak +
+    '    numero astext varying(10), #B'+ sLineBreak +
     '    complemento character varying(20), #B'+ sLineBreak +
     '    bairro character varying(30), #B'+ sLineBreak +
-    '    cep integer(8), #B'+ sLineBreak +
+    '    cep astext(8), #B'+ sLineBreak +
     '    email character varying(200), #B'+ sLineBreak +
     '    observacoes memo, #B'+ sLineBreak +
-    '    cpf integer(11), #B'+ sLineBreak +
-    '    rg integer varying(20), #B'+ sLineBreak +
+    '    cpf astext(11), #B'+ sLineBreak +
+    '    rg astext varying(20), #B'+ sLineBreak +
     '    numero_passaporte character varying(20), #B'+ sLineBreak +
-    '    fone_comercial integer varying(20), #C'+ sLineBreak +
-    '    fone_residencial integer varying(20), #C'+ sLineBreak +
-    '    fone_celular integer varying(20), #C'+ sLineBreak +
+    '    fone_comercial astext varying(20), #C'+ sLineBreak +
+    '    fone_residencial astext varying(20), #C'+ sLineBreak +
+    '    fone_celular astext varying(20), #C'+ sLineBreak +
     '    orgao_emissor_rg character varying(10), #D'+ sLineBreak +
     '    estado_civil character(2), #C'+ sLineBreak +
     '    razao_social character varying(100), #A'+ sLineBreak +
     '    ie character varying(20), #C'+ sLineBreak +
-    '    fone integer varying(20), #C'+ sLineBreak +
-    '    fax integer varying(20), #C'+ sLineBreak +
+    '    fone astext varying(20), #C'+ sLineBreak +
+    '    fax astext varying(20), #C'+ sLineBreak +
     '    website character varying(50), #B'+ sLineBreak +
-    '    cnpj integer(14), #B';
+    '    cnpj astext(14), #B';
 
   ReturnValue := FFTSGenerator.GenerateData('pessoa', RawColumns);
 

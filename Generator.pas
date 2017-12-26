@@ -3,7 +3,7 @@ unit Generator;
 interface
 
 type
-  TFTSFieldType = (ftText, ftNumeric);
+  TFTSFieldType = (ftText, ftTextAsNumeric, ftInteger);
 
   TFTSColumn = record
     name: string;
@@ -38,8 +38,6 @@ uses
   System.SysUtils;
 
 procedure TFTSGenerator.AddResult(const ValueFmt: string; const Args: array of const);
-var
-  Str: string;
 begin
   if Length(FResults) > 0 then
     FResults := FResults + [''];
@@ -105,7 +103,8 @@ var
 
   procedure AddNumericColumns;
   const
-    NumericFmt = '%s_temp.%s';
+    NumericAsTextFmt = '%s_temp.%s';
+    NumericFmt = 'NEW.%s';
     ReverseFmt = 'reverse(%s)';
   var
     NumericColumn: TFTSColumn;
@@ -117,7 +116,11 @@ var
 
     for NumericColumn in Numerics do
     begin
-      Col := Format(NumericFmt, [FTable, NumericColumn.name]);
+      if NumericColumn.typ = ftTextAsNumeric then
+        Col := Format(NumericAsTextFmt, [FTable, NumericColumn.name])
+      else
+        Col := Format(NumericFmt, [NumericColumn.name]);
+
       Cols := Cols + [Col];
       Cols := Cols + [Format(ReverseFmt, [Col])];
     end;
@@ -132,7 +135,6 @@ var
   var
     TextColumn: TFTSColumn;
     Cols: TArray<string>;
-    ColsStr: string;
   begin
     if Length(Texts) = 0 then
       Exit;
@@ -158,7 +160,7 @@ begin
     for Column in Weights[I] do
     begin
       case Column.typ of
-        ftNumeric: Numerics := Numerics + [Column];
+        ftTextAsNumeric, ftInteger: Numerics := Numerics + [Column];
         ftText: Texts := Texts + [Column];
       end;
     end;
@@ -213,7 +215,7 @@ var
 begin
   NumericColumns := [];
   for Column in FColumns do
-    if Column.typ = ftNumeric then
+    if Column.typ = ftTextAsNumeric then
       NumericColumns := NumericColumns + [Column.name];
 
   if Length(NumericColumns) = 0 then
@@ -234,10 +236,13 @@ var
 
   function ColumnType(typ: string): TFTSFieldType;
   begin
-    if (typ.StartsWith('char')) or (typ.StartsWith('text')) or (typ.StartsWith('memo')) then
-      Exit(ftText);
+    if typ.StartsWith('astext') then
+      Exit(ftTextAsNumeric);
 
-    Result := ftNumeric;
+    if typ.StartsWith('int') then
+      Exit(ftInteger);
+
+    Result := ftText;
   end;
 
   function ColumnWeight: string;
