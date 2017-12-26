@@ -80,7 +80,7 @@ const
     'BEGIN'+ sLineBreak +
     '  NEW.FTS_DOCUMENT = (%s);'+ sLineBreak +
     '  RETURN NEW;'+ sLineBreak +
-    'END;';
+    'END; $$ LANGUAGE plpgsql;';
 var
   TriggerContent, TempTable: string;
 begin
@@ -127,6 +127,8 @@ var
   end;
 
   procedure AddTextColumns;
+  const
+    ColumnFmt = 'NEW.%s';
   var
     TextColumn: TFTSColumn;
     Cols: TArray<string>;
@@ -136,7 +138,7 @@ var
       Exit;
 
     for TextColumn in Texts do
-      Cols := Cols + [TextColumn.name];
+      Cols := Cols + [Format(ColumnFmt, [TextColumn.name])];
 
     if Length(Cols) > 1 then
       Cols[0] := sLineBreak +'      '+ Cols[0];

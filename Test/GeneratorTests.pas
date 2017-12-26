@@ -77,8 +77,8 @@ begin
     '      regexp_replace(NEW.cnpj, ''[^0-9]'', '''', ''g'')))'+ sLineBreak +
     '    SELECT'+ sLineBreak +
     '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '','+ sLineBreak +
-    '      nome,'+ sLineBreak +
-    '      razao_social), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''A'') ||'+ sLineBreak +
+    '      NEW.nome,'+ sLineBreak +
+    '      NEW.razao_social), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''A'') ||'+ sLineBreak +
     '    setweight(to_tsvector(''pt'', coalesce(concat_ws('' '','+ sLineBreak +
     '      pessoa_temp.numero,'+ sLineBreak +
     '      reverse(pessoa_temp.numero),'+ sLineBreak +
@@ -91,13 +91,13 @@ begin
     '      pessoa_temp.cnpj,'+ sLineBreak +
     '      reverse(pessoa_temp.cnpj)),'''')), ''B'') ||'+ sLineBreak +
     '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '','+ sLineBreak +
-    '      endereco,'+ sLineBreak +
-    '      complemento,'+ sLineBreak +
-    '      bairro,'+ sLineBreak +
-    '      email,'+ sLineBreak +
-    '      observacoes,'+ sLineBreak +
-    '      numero_passaporte,'+ sLineBreak +
-    '      website), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''B'') ||'+ sLineBreak +
+    '      NEW.endereco,'+ sLineBreak +
+    '      NEW.complemento,'+ sLineBreak +
+    '      NEW.bairro,'+ sLineBreak +
+    '      NEW.email,'+ sLineBreak +
+    '      NEW.observacoes,'+ sLineBreak +
+    '      NEW.numero_passaporte,'+ sLineBreak +
+    '      NEW.website), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''B'') ||'+ sLineBreak +
     '    setweight(to_tsvector(''pt'', coalesce(concat_ws('' '','+ sLineBreak +
     '      pessoa_temp.fone_comercial,'+ sLineBreak +
     '      reverse(pessoa_temp.fone_comercial),'+ sLineBreak +
@@ -110,12 +110,12 @@ begin
     '      pessoa_temp.fax,'+ sLineBreak +
     '      reverse(pessoa_temp.fax)),'''')), ''C'') ||'+ sLineBreak +
     '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '','+ sLineBreak +
-    '      estado_civil,'+ sLineBreak +
-    '      ie), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''C'') ||'+ sLineBreak +
-    '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '',orgao_emissor_rg), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''D'')'+ sLineBreak +
+    '      NEW.estado_civil,'+ sLineBreak +
+    '      NEW.ie), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''C'') ||'+ sLineBreak +
+    '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '',NEW.orgao_emissor_rg), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''D'')'+ sLineBreak +
     '    FROM pessoa_temp);'+ sLineBreak +
     '  RETURN NEW;'+ sLineBreak +
-    'END;' + sLineBreak + sLineBreak +
+    'END; $$ LANGUAGE plpgsql;' + sLineBreak + sLineBreak +
     '-----------------------------------------------------------------' + sLineBreak +
     'CREATE TRIGGER pessoa_fts_update_trigger BEFORE INSERT OR UPDATE ON pessoa FOR EACH ROW EXECUTE PROCEDURE pessoa_fts_document_trigger();';
 
@@ -162,32 +162,32 @@ begin
     'BEGIN'+ sLineBreak +
     '  NEW.FTS_DOCUMENT = ('+ sLineBreak +
     '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '','+ sLineBreak +
-    '      nome,'+ sLineBreak +
-    '      razao_social), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''A'') ||'+ sLineBreak +
+    '      NEW.nome,'+ sLineBreak +
+    '      NEW.razao_social), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''A'') ||'+ sLineBreak +
     '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '',' + sLineBreak +
-    '      endereco,'+ sLineBreak +
-    '      numero,'+ sLineBreak +
-    '      complemento,'+ sLineBreak +
-    '      bairro,'+ sLineBreak +
-    '      cep,'+ sLineBreak +
-    '      email,'+ sLineBreak +
-    '      observacoes,'+ sLineBreak +
-    '      cpf,'+ sLineBreak +
-    '      rg,'+ sLineBreak +
-    '      numero_passaporte,'+ sLineBreak +
-    '      website,'+ sLineBreak +
-    '      cnpj), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''B'') ||'+ sLineBreak +
+    '      NEW.endereco,'+ sLineBreak +
+    '      NEW.numero,'+ sLineBreak +
+    '      NEW.complemento,'+ sLineBreak +
+    '      NEW.bairro,'+ sLineBreak +
+    '      NEW.cep,'+ sLineBreak +
+    '      NEW.email,'+ sLineBreak +
+    '      NEW.observacoes,'+ sLineBreak +
+    '      NEW.cpf,'+ sLineBreak +
+    '      NEW.rg,'+ sLineBreak +
+    '      NEW.numero_passaporte,'+ sLineBreak +
+    '      NEW.website,'+ sLineBreak +
+    '      NEW.cnpj), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''B'') ||'+ sLineBreak +
     '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '','+ sLineBreak +
-    '      fone_comercial,'+ sLineBreak +
-    '      fone_residencial,'+ sLineBreak +
-    '      fone_celular,'+ sLineBreak +
-    '      estado_civil,'+ sLineBreak +
-    '      ie,'+ sLineBreak +
-    '      fone,'+ sLineBreak +
-    '      fax), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''C'') ||'+ sLineBreak +
-    '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '',orgao_emissor_rg), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''D''));'+ sLineBreak +
+    '      NEW.fone_comercial,'+ sLineBreak +
+    '      NEW.fone_residencial,'+ sLineBreak +
+    '      NEW.fone_celular,'+ sLineBreak +
+    '      NEW.estado_civil,'+ sLineBreak +
+    '      NEW.ie,'+ sLineBreak +
+    '      NEW.fone,'+ sLineBreak +
+    '      NEW.fax), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''C'') ||'+ sLineBreak +
+    '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '',NEW.orgao_emissor_rg), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''D''));'+ sLineBreak +
     '  RETURN NEW;'+ sLineBreak +
-    'END;' + sLineBreak + sLineBreak +
+    'END; $$ LANGUAGE plpgsql;' + sLineBreak + sLineBreak +
     '-----------------------------------------------------------------' + sLineBreak +
     'CREATE TRIGGER pessoa_fts_update_trigger BEFORE INSERT OR UPDATE ON pessoa FOR EACH ROW EXECUTE PROCEDURE pessoa_fts_document_trigger();';
 
@@ -224,10 +224,10 @@ begin
     'CREATE OR REPLACE FUNCTION pessoa_fts_document_trigger() RETURNS TRIGGER AS $$'+ sLineBreak +
     'BEGIN'+ sLineBreak +
     '  NEW.FTS_DOCUMENT = ('+ sLineBreak +
-    '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '',nome), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''A'') ||'+ sLineBreak +
-    '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '',endereco), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''D''));'+ sLineBreak +
+    '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '',NEW.nome), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''A'') ||'+ sLineBreak +
+    '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '',NEW.endereco), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''D''));'+ sLineBreak +
     '  RETURN NEW;'+ sLineBreak +
-    'END;' + sLineBreak + sLineBreak +
+    'END; $$ LANGUAGE plpgsql;' + sLineBreak + sLineBreak +
     '-----------------------------------------------------------------' + sLineBreak +
     'CREATE TRIGGER pessoa_fts_update_trigger BEFORE INSERT OR UPDATE ON pessoa FOR EACH ROW EXECUTE PROCEDURE pessoa_fts_document_trigger();'
     , ReturnValue);
