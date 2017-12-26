@@ -70,7 +70,7 @@ procedure TFTSGenerator.GenerateTrigger;
 const
   TriggerFmt = 'CREATE TRIGGER %s_fts_update_trigger BEFORE INSERT OR UPDATE ON %s FOR EACH ROW EXECUTE PROCEDURE %s_fts_document_trigger();';
 begin
-  //AddResult(TriggerFmt, [FTable, FTable, FTable]);
+  AddResult(TriggerFmt, [FTable, FTable, FTable]);
 end;
 
 procedure TFTSGenerator.GenerateFTSFunction;

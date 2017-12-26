@@ -115,7 +115,9 @@ begin
     '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '',orgao_emissor_rg), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''D'')'+ sLineBreak +
     '    FROM pessoa_temp);'+ sLineBreak +
     '  RETURN NEW;'+ sLineBreak +
-    'END;';
+    'END;' + sLineBreak + sLineBreak +
+    '-----------------------------------------------------------------' + sLineBreak +
+    'CREATE TRIGGER pessoa_fts_update_trigger BEFORE INSERT OR UPDATE ON pessoa FOR EACH ROW EXECUTE PROCEDURE pessoa_fts_document_trigger();';
 
   Assert.AreEqual(Expected, ReturnValue);
 end;
@@ -185,7 +187,9 @@ begin
     '      fax), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''C'') ||'+ sLineBreak +
     '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '',orgao_emissor_rg), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''D''));'+ sLineBreak +
     '  RETURN NEW;'+ sLineBreak +
-    'END;';
+    'END;' + sLineBreak + sLineBreak +
+    '-----------------------------------------------------------------' + sLineBreak +
+    'CREATE TRIGGER pessoa_fts_update_trigger BEFORE INSERT OR UPDATE ON pessoa FOR EACH ROW EXECUTE PROCEDURE pessoa_fts_document_trigger();';
 
   Assert.AreEqual(Expected, ReturnValue);
 end;
@@ -223,7 +227,10 @@ begin
     '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '',nome), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''A'') ||'+ sLineBreak +
     '    setweight(to_tsvector(''pt'', regexp_replace(concat_ws('' '',endereco), ''[^a-zA-ZÀ-ÿ0-9\s]'', '' '', ''g'')), ''D''));'+ sLineBreak +
     '  RETURN NEW;'+ sLineBreak +
-    'END;', ReturnValue);
+    'END;' + sLineBreak + sLineBreak +
+    '-----------------------------------------------------------------' + sLineBreak +
+    'CREATE TRIGGER pessoa_fts_update_trigger BEFORE INSERT OR UPDATE ON pessoa FOR EACH ROW EXECUTE PROCEDURE pessoa_fts_document_trigger();'
+    , ReturnValue);
 end;
 
 initialization
