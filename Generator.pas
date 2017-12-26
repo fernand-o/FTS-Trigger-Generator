@@ -104,7 +104,6 @@ var
   procedure AddNumericColumns;
   const
     NumericAsTextFmt = '%s_temp.%s';
-    NumericFmt = 'NEW.%s';
     ReverseFmt = 'reverse(%s)';
   var
     NumericColumn: TFTSColumn;
@@ -116,11 +115,7 @@ var
 
     for NumericColumn in Numerics do
     begin
-      if NumericColumn.typ = ftTextAsNumeric then
-        Col := Format(NumericAsTextFmt, [FTable, NumericColumn.name])
-      else
-        Col := Format(NumericFmt, [NumericColumn.name]);
-
+      Col := Format(NumericAsTextFmt, [FTable, NumericColumn.name]);
       Cols := Cols + [Col];
       Cols := Cols + [Format(ReverseFmt, [Col])];
     end;
@@ -206,27 +201,39 @@ end;
 function TFTSGenerator.TempTableDefinition: string;
 const
   TempTableFmt = sLineBreak + '    WITH %s_temp(%s) AS (VALUES ('+ sLineBreak + '%s))';
-  NumRegexFmt = '      regexp_replace(NEW.%s, ''[^0-9]'', '''', ''g'')';
+  NumAsTextRegexFmt = '      regexp_replace(NEW.%s, ''[^0-9]'', '''', ''g'')';
+  IntFmt = '      cast(NEW.%s as varchar(11))';
 var
   Column: TFTSColumn;
-  NumericColumns: TArray<string>;
-  ColumnNames: string;
-  I: Integer;
+  NumericColumns: TArray<TFTSColumn>;
+  ColumnNames, ColumnFormattedNames: TArray<string>;
+  NewName: string;
 begin
   NumericColumns := [];
   for Column in FColumns do
-    if Column.typ = ftTextAsNumeric then
-      NumericColumns := NumericColumns + [Column.name];
+    if Column.typ in [ftTextAsNumeric, ftInteger] then
+      NumericColumns := NumericColumns + [Column];
 
   if Length(NumericColumns) = 0 then
     Exit('');
 
-  ColumnNames := ''.Join(',', NumericColumns);
+  ColumnNames := [];
+  ColumnFormattedNames := [];
+  for Column in NumericColumns do
+  begin
+    ColumnNames := ColumnNames + [Column.name];
 
-  for I := 0 to Pred(Length(NumericColumns)) do
-    NumericColumns[I] := Format(NumRegexFmt, [NumericColumns[I]]);
+    case Column.typ of
+      ftTextAsNumeric: NewName := Format(NumAsTextRegexFmt, [Column.name]);
+      ftInteger: NewName := Format(IntFmt, [Column.name]);
+    end;
+    ColumnFormattedNames := ColumnFormattedNames + [NewName];
+  end;
 
-  Result := Format(TempTableFmt, [FTable, ColumnNames, ''.Join(',' + sLineBreak, NumericColumns)]);
+  Result := Format(TempTableFmt, [FTable,
+    ''.Join(',', ColumnNames),
+    ''.Join(',' + sLineBreak, ColumnFormattedNames)
+  ]);
 end;
 
 procedure TFTSGenerator.DefineColumns;

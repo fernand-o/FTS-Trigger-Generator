@@ -35,7 +35,7 @@ begin
     '    numero astext varying(10), #B'+ sLineBreak +
     '    complemento character varying(20), #B'+ sLineBreak +
     '    bairro character varying(30), #B'+ sLineBreak +
-    '    cep astext(8), #B'+ sLineBreak +
+    '    cep integer(8), #B'+ sLineBreak +
     '    email character varying(200), #B'+ sLineBreak +
     '    observacoes memo, #B'+ sLineBreak +
     '    cpf astext(11), #B'+ sLineBreak +
@@ -66,7 +66,7 @@ begin
     '  NEW.FTS_DOCUMENT = ('+ sLineBreak +
     '    WITH pessoa_temp(numero,cep,cpf,rg,fone_comercial,fone_residencial,fone_celular,fone,fax,cnpj) AS (VALUES ('+ sLineBreak +
     '      regexp_replace(NEW.numero, ''[^0-9]'', '''', ''g''),'+ sLineBreak +
-    '      regexp_replace(NEW.cep, ''[^0-9]'', '''', ''g''),'+ sLineBreak +
+    '      cast(NEW.cep as varchar(11)),'+ sLineBreak +
     '      regexp_replace(NEW.cpf, ''[^0-9]'', '''', ''g''),'+ sLineBreak +
     '      regexp_replace(NEW.rg, ''[^0-9]'', '''', ''g''),'+ sLineBreak +
     '      regexp_replace(NEW.fone_comercial, ''[^0-9]'', '''', ''g''),'+ sLineBreak +
