@@ -117,7 +117,9 @@ begin
     '  RETURN NEW;'+ sLineBreak +
     'END; $$ LANGUAGE plpgsql;' + sLineBreak + sLineBreak +
     '-----------------------------------------------------------------' + sLineBreak +
-    'CREATE TRIGGER pessoa_fts_update_trigger BEFORE INSERT OR UPDATE ON pessoa FOR EACH ROW EXECUTE PROCEDURE pessoa_fts_document_trigger();';
+    'CREATE TRIGGER pessoa_fts_update_trigger BEFORE INSERT OR UPDATE ON pessoa FOR EACH ROW EXECUTE PROCEDURE pessoa_fts_document_trigger();' + sLineBreak + sLineBreak +
+    '-----------------------------------------------------------------' + sLineBreak +
+    'UPDATE pessoa SET fts_document = '''';';
 
   Assert.AreEqual(Expected, ReturnValue);
 end;
@@ -189,7 +191,9 @@ begin
     '  RETURN NEW;'+ sLineBreak +
     'END; $$ LANGUAGE plpgsql;' + sLineBreak + sLineBreak +
     '-----------------------------------------------------------------' + sLineBreak +
-    'CREATE TRIGGER pessoa_fts_update_trigger BEFORE INSERT OR UPDATE ON pessoa FOR EACH ROW EXECUTE PROCEDURE pessoa_fts_document_trigger();';
+    'CREATE TRIGGER pessoa_fts_update_trigger BEFORE INSERT OR UPDATE ON pessoa FOR EACH ROW EXECUTE PROCEDURE pessoa_fts_document_trigger();' + sLineBreak + sLineBreak +
+    '-----------------------------------------------------------------' + sLineBreak +
+    'UPDATE pessoa SET fts_document = '''';';
 
   Assert.AreEqual(Expected, ReturnValue);
 end;
@@ -229,7 +233,9 @@ begin
     '  RETURN NEW;'+ sLineBreak +
     'END; $$ LANGUAGE plpgsql;' + sLineBreak + sLineBreak +
     '-----------------------------------------------------------------' + sLineBreak +
-    'CREATE TRIGGER pessoa_fts_update_trigger BEFORE INSERT OR UPDATE ON pessoa FOR EACH ROW EXECUTE PROCEDURE pessoa_fts_document_trigger();'
+    'CREATE TRIGGER pessoa_fts_update_trigger BEFORE INSERT OR UPDATE ON pessoa FOR EACH ROW EXECUTE PROCEDURE pessoa_fts_document_trigger();' + sLineBreak + sLineBreak +
+    '-----------------------------------------------------------------' + sLineBreak +
+    'UPDATE pessoa SET fts_document = '''';'
     , ReturnValue);
 end;
 

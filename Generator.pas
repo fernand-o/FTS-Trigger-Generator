@@ -23,6 +23,7 @@ type
     procedure GenerateMetadata;
     procedure GenerateFTSFunction;
     procedure GenerateTrigger;
+    procedure GenerateUpdateCommand;
     function TempTableDefinition: string;
     function SelectWithWeights: string;
     function ProcessColumns(Weights: TArray<TArray<TFTSColumn>>): string;
@@ -54,6 +55,7 @@ begin
   GenerateMetadata;
   GenerateFTSFunction;
   GenerateTrigger;
+  GenerateUpdateCommand;
 
   Result := ''.Join(sLineBreak, FResults);
 end;
@@ -69,6 +71,13 @@ const
   TriggerFmt = 'CREATE TRIGGER %s_fts_update_trigger BEFORE INSERT OR UPDATE ON %s FOR EACH ROW EXECUTE PROCEDURE %s_fts_document_trigger();';
 begin
   AddResult(TriggerFmt, [FTable, FTable, FTable]);
+end;
+
+procedure TFTSGenerator.GenerateUpdateCommand;
+const
+  UpdateFmt = 'UPDATE %s SET fts_document = '''';';
+begin
+  AddResult(UpdateFmt, [FTable]);
 end;
 
 procedure TFTSGenerator.GenerateFTSFunction;

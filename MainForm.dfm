@@ -77,6 +77,7 @@ object Form1: TForm1
     Width = 563
     Height = 637
     Align = alRight
+    ScrollBars = ssVertical
     TabOrder = 3
   end
   object Button2: TButton
